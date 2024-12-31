@@ -1,0 +1,65 @@
+
+
+
+{% extends 'base.html' %}
+{% block content %}
+    <!-- Header Section -->
+    <header class="bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1>Welcome to Our E-Commerce Store</h1>
+            <p class="lead">Find the best products at unbeatable prices</p>
+        </div>
+    </header>
+
+    <!-- Featured Products Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4">
+                    <div class="card position-relative">
+                        {% if product.is_sale %}
+                        <!-- Sale Badge -->
+                        <span class="badge bg-success position-absolute top-0 start-0 m-2" style="font-size: 1.2rem; padding: 0.5rem 1rem;">Sale</span>
+                        {% endif %}
+                        
+                        <!-- Product Image -->
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        
+                        <div class="card-body">
+                            <!-- Product Name -->
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            
+                            <!-- Product Price -->
+                            {% if product.is_sale %}
+                            <p class="card-text"><strike>${{ product.price }}</strike> ${{ product.sale_price }}</p>
+                            {% else %}
+                            <p class="card-text">${{ product.price }}</p>
+                            {% endif %}
+                            
+                            <!-- Star Rating -->
+                            <div class="mb-2">
+                                {% for i in "12345" %}
+                                    {% if product.rating >= forloop.counter %}
+                                    <i class="fas fa-star text-warning"></i> <!-- Filled star -->
+                                    {% else %}
+                                    <i class="far fa-star text-warning"></i> <!-- Empty star -->
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2">{{ product.rating|floatformat:1 }}/5</span>
+                            </div>
+                            
+                            <!-- Product Description -->
+                            <p>{{ product.category }}</p>
+                            
+                            <!-- Add to Cart Button -->
+                            <a href="{% url 'product' product.id %}" class="btn btn-primary">View product</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+

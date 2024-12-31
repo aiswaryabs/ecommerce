@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+    <!-- Header Section -->
+    <header class="bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1>Checkout</h1>
+            <p class="lead">Review Your Order</p>
+        </div>
+    </header>
+ <br/>
+ <div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                  Order Summary
+                </div>
+                <div class="card-body">
+                    {% for product in cart_products %}
+                    {{ product.name}}:
+                    {% if product.is_sale %}
+                    ${{ product.sale_price }}
+                    {% else %}
+                    ${{ product.price }}
+                    {% endif %}
+                    <br/> 
+                    <small>
+                    Quantity:
+                    {% for key, value in quantities.items %}
+                    {% if key == product.id|slugify %}
+                      {{ value }}
+                    {% endif %}
+                    
+                  {% endfor %}
+
+<br/></small>
+<br/>
+
+
+                    {% endfor %}
+                    <br/>
+                    <strong>Total:${{totals}}</strong>
+                    <br/><br/>
+                    <a href="{% url 'cart_summary'%}" class="btn btn-sm btn-outline-secondary">Update Items</a>
+                </div>
+              </div>
+              <br/>
+              <div class="card">
+                <div class="card-header">
+                    Shipping Info
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'billing_info' %}">
+                        {% csrf_token %}
+                        {{ shipping_form.as_p }}
+                        <button type="submit" class="btn btn-secondary">Continue To Billing</button>
+                    </form>
+                </div>
+            </div>
+                   </form>
+        </div>
+    </div>
+
+       
+  
+ </div>
+ <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+            
+
+
+
+
+
+{% endblock %}

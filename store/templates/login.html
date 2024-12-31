@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<header class="bg-primary text-white text-center py-3"> <!-- Reduced header padding -->
+    <div class="container">
+        <h1>Login to your account</h1>
+        <p class="lead">Find the best products at unbeatable prices</p>
+    </div>
+</header>
+
+<!-- Reduced margin-top on the form container -->
+<div class="container" style="height: 100vh; margin-top: -100px;">  <!-- Negative margin to reduce space -->
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <form class="w-50" method="POST" action="{% url 'login'%}"> <!-- Adjust the width using w-50, w-75, etc. -->
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label" >Username</label>
+                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Your Username" name="username">
+                
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Enter Your Password" name="password">
+            </div>
+        
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

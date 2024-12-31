@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br />
+<div class="container">
+  <div class="card mb-4 shadow-sm">
+    <div class="row g-0">
+      <!-- Image Column -->
+      <div class="col-md-5">
+        <div class="position-relative">
+          {% if product.is_sale %}
+          <!-- Sale Badge -->
+          <span class="badge bg-success position-absolute top-0 start-0 m-2" style="font-size: 1.2rem; padding: 0.5rem 1rem;">Sale</span>
+          {% endif %}
+          <img src="{{ product.image.url }}" class="img-fluid rounded-start w-100" alt="{{ product.name }}">
+        </div>
+      </div>
+
+      <!-- Content Column -->
+      <div class="col-md-7 d-flex align-items-center">
+        <div class="card-body text-center" style="overflow-y: auto; max-height: 400px;">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text text-wrap">{{ product.description }}</p>
+
+          <p>ID: {{ product.id }}</p>
+          <div class ="row justify-content-center">
+            <div class="col-md-2">Quantity:</div>
+            <div class="col-md-2">
+         
+          <select class="form-select form-select-sm" id="qty-cart">
+            
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="1">4</option>
+            <option value="2">5</option>
+            <option value="3">6</option>
+          </select>
+        </div>
+      </div>
+          <p>
+              {% if product.is_sale %}
+                  <span class="text-muted" style="text-decoration: line-through;">${{ product.price }}</span>
+                  <span class="text-success" style="font-weight: bold;">${{ product.sale_price }}</span>
+              {% else %}
+                  <span>${{ product.price }}</span>
+              {% endif %}
+          </p>
+          
+          
+          <!-- Star Rating -->
+          <div class="mb-3">
+            {% for i in "12345" %}
+            {% if product.rating >= forloop.counter %}
+            <i class="fas fa-star text-warning"></i> <!-- Filled star -->
+            {% else %}
+            <i class="far fa-star text-warning"></i> <!-- Empty star -->
+            {% endif %}
+
+           
+            {% endfor %}
+            <span class="ms-2">{{ product.rating|floatformat:1 }}/5</span>
+          </div>
+
+          <!-- Home Button -->
+          <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+          <button type='button' value="{{ product.id}}" class="btn btn-secondary" id="add-cart">Add To Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  //check if button pressed
+$(document).on('click', '#add-cart', function(e) {
+    e.preventDefault();
+
+    // Get the product ID
+    const productId = $(this).val();
+
+    // Send AJAX request
+    $.ajax({
+        type: 'POST',
+        url: '{% url "cart_add" %}',
+        data: {
+            product_id:$('#add-cart').val(),
+            product_qty:$('#qty-cart option:selected').text(),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: 'post'
+        },
+        success: function(json) {
+            //console.log(json)
+            document.getElementById("cart_quantity").textContent =json.qty
+            location.reload();
+        },
+        error: function(xhr, errmsg, err) {
+            
+        }
+    });
+})
+
+</script>
+
+
+  
+{% endblock %}

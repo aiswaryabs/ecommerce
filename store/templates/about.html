@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<header class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Welcome to ShopEase</h1>
+        <p class="lead">Your ultimate destination for a seamless shopping experience</p>
+    </div>
+</header>
+
+<section class="about-us my-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <!-- Correct image path using the static tag -->
+                <img src="{% static 'ha.webp' %}" alt="ShopEase Store" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-md-6">
+                <h2 class="text-primary">About ShopEase</h2>
+                <p class="text-muted">
+                    At <strong>ShopEase</strong>, we believe in redefining the way you shop by combining quality, convenience, and innovation. Our platform offers a curated selection of premium products across a variety of categories, ensuring that every customer finds exactly what they need.
+                </p>
+                <p class="text-muted">
+                    From intuitive browsing to secure checkouts, we prioritize simplicity and safety at every step. Our customizable cart options and efficient order tracking let you enjoy a hassle-free shopping journey.
+                </p>
+                <p class="text-muted">
+                    At the heart of ShopEase is our dedication to customer satisfaction. We are committed to delivering exceptional service, prompt deliveries, and exclusive deals that make every visit worth your while. Whether you're stocking up on essentials or indulging in a special purchase, we're here to make it effortless.
+                </p>
+                <p class="text-muted">
+                    Explore, shop, and enjoy the best of quality and value with <strong>ShopEase</strong>. Your satisfaction is our priority.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="our-values py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="text-primary mb-4">Our Values</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="icon mb-3">
+                    <i class="fas fa-thumbs-up fa-2x text-primary"></i>
+                </div>
+                <h4>Customer Satisfaction</h4>
+                <p>We go the extra mile to ensure your shopping experience exceeds expectations.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="icon mb-3">
+                    <i class="fas fa-shield-alt fa-2x text-primary"></i>
+                </div>
+                <h4>Trust & Security</h4>
+                <p>Your data and transactions are always safe with us.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="icon mb-3">
+                    <i class="fas fa-shipping-fast fa-2x text-primary"></i>
+                </div>
+                <h4>Fast Delivery</h4>
+                <p>We ensure your orders reach you promptly and in perfect condition.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="text-center text-muted py-4">
+    <p>© 2024 ShopEase. All rights reserved.</p>
+</footer>
+
+{% endblock %}
