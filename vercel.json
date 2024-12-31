@@ -1,18 +1,18 @@
 {
-    "builds": [
+    "builds":[
         {
-            "src": "ecom/wsgi.py",
-            "use": "@vercel/python",
-            "config": {
-                "maxLambdaSize": "15mb", 
-                "runtime": "python3.12"
+            "src":"ecom/wsgi.py",
+            "use":"@vercel/python",
+            "config":{
+                "maxLambadaSize":"15mb",
+                "runtime":"python3.12"
             }
         }
     ],
-    "routes": [
+    "routes":[
         {
-            "src": "/(.*)",
-            "dest": "ecom/wsgi.py"
+            "src":"/(.*)",
+            "dest":"ecom/wsgi.py"
         }
     ]
 }
