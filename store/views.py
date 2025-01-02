@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import Product,Category,Profile
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from payment.forms import ShippingForm
 from payment.models import ShippingAddress
 from .forms import ProductForm,CategoryForm
+
 
 # Create your views here.
 
@@ -227,3 +228,41 @@ def add_category(request):
 
     return render(request, 'add_category.html', {'form': form})
 
+
+from django.shortcuts import get_object_or_404
+
+@login_required
+@user_passes_test(is_admin)
+def update_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)  # Fetch the product to update
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # Redirect to home or product list page
+    else:
+        form = ProductForm(instance=product)  # Prefill the form with product data
+
+    return render(request, 'update_product.html', {'form': form})
+
+
+
+# Delete Products in a single page
+@login_required
+@user_passes_test(is_admin)
+def delete_product(request):
+    products = Product.objects.all()
+
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        product = get_object_or_404(Product, id=product_id)
+        product.delete()
+        messages.success(request, "Product deleted successfully!")
+        return redirect('delete_product')
+
+    return render(request, 'delete_product.html', {'products': products})
+@login_required
+@user_passes_test(is_admin)
+def update_product_list(request):
+    products = Product.objects.all()  # Fetch all products
+    return render(request, 'update_product_list.html', {'products': products})

@@ -54,11 +54,21 @@
                         <li><a class="dropdown-item" href="{% url 'category' 'Mobiles' %}">Mobiles</a></li>
                     </ul>
                 </li>
-
                 {% if user.is_authenticated and user.is_staff %}
-                <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'add_product' %}"><strong>Add Product</strong></a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <strong>Admin Actions</strong>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                        <li><a class="dropdown-item" href="{% url 'add_product' %}">Add Product</a></li>
+                        <li><a class="dropdown-item" href="{% url 'update_product_list' %}">Update Product</a></li>
+
+                        <li><a class="dropdown-item" href="{% url 'delete_product' %}">Delete Product</a></li>
+                    </ul>
                 </li>
+                
+                
+            
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'add_category' %}"><strong>Add Category</strong></a>
                 </li>

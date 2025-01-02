@@ -17,5 +17,11 @@ urlpatterns = [
     path('search/',views.search,name='search'),
     path('add-product/', views.add_product, name='add_product'),
     path('add-category/', views.add_category, name='add_category'),
+    path('update-product/<int:product_id>/', views.update_product, name='update_product'),
+
+    path('delete-product/', views.delete_product, name='delete_product'),
+    path('update-product-list/', views.update_product_list, name='update_product_list'),
+
+
 
 ]
