@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<header class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Welcome to ShopEase</h1>
+        <p class="lead">Your ultimate destination for a seamless shopping experience</p>
+    </div>
+</header>
+<div class="container mt-5">
+    <h2>Add New Category</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Category</button>
+    </form>
+</div>
+{% endblock %}

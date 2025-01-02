@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm,UserChangeForm,SetPasswordForm
 from django import forms
 from .models import Profile
-
+from .models import Product, Category
 
 class SignUpForm(UserCreationForm):
 	email = forms.EmailField(label="", widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
@@ -114,3 +114,15 @@ class UserInfoForm(forms.ModelForm):
 
 
 
+
+class ProductForm(forms.ModelForm):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label="Select Category")
+
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price', 'sale_price', 'image', 'is_sale', 'rating', 'category']
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']  # Include the fields you want to display

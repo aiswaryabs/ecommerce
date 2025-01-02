@@ -15,4 +15,7 @@ urlpatterns = [
     path('update_password/',views.update_password,name='update_password'),
     path('update_info/',views.update_info,name='update_info'),
     path('search/',views.search,name='search'),
+    path('add-product/', views.add_product, name='add_product'),
+    path('add-category/', views.add_category, name='add_category'),
+
 ]

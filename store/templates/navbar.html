@@ -1,50 +1,51 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="{% url 'home' %}">ECOMMERCE</a>
+        <a class="navbar-brand" href="{% url 'home' %}" style="font-family: 'Arial', sans-serif; font-size: 24px; font-weight: bold; color: #2504b9; text-decoration: none; transition: all 0.3s ease;">
+            ShopEase
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left Navigation -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link active" href="{% url 'search' %}">Search</a></li>
-                <li class="nav-item"><a class="nav-link active" href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}"><strong>Home</strong></a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'search' %}"><strong>Search</strong></a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'about' %}"><strong>About</strong></a></li>
                 
                 {% if user.is_authenticated %}
-                <li class="nav-item "><a class="nav-link active" href="{% url 'logout' %}">Logout</a></li>
-                    <!-- Profile Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Profile</a>
-                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="{% url 'update_user' %}">User Profile</a></li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="{% url 'update_info' %}">User Info</a></li>
-                        </ul>
-                    </li>
-                    
-   {% if user.is_superuser %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Orders</a>
-                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="{% url 'shipped_dash' %}">Shipped Orders</a></li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="{% url 'not_shipped_dash' %}">Un-shipped orders</a></li>
-                        </ul>
-                    </li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'logout' %}"><strong>Logout</strong></a></li>
+                
+                <!-- Profile Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" id="profileDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><strong>Profile</strong></a>
+                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="{% url 'update_user' %}">User Profile</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="{% url 'update_info' %}">User Info</a></li>
+                    </ul>
+                </li>
 
-{% endif %}
-
-
+                {% if user.is_superuser %}
+                <!-- Orders Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" id="ordersDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><strong>Orders</strong></a>
+                    <ul class="dropdown-menu" aria-labelledby="ordersDropdown">
+                        <li><a class="dropdown-item" href="{% url 'shipped_dash' %}">Shipped Orders</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="{% url 'not_shipped_dash' %}">Un-shipped Orders</a></li>
+                    </ul>
+                </li>
+                {% endif %}
                 {% else %}
-                    <li class="nav-item"><a class="nav-link active" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="{% url 'register' %}">Register</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'login' %}"><strong>Login</strong></a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'register' %}"><strong>Register</strong></a></li>
                 {% endif %}
 
                 <!-- Shop Dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle active" id="shopDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                    <a class="nav-link dropdown-toggle active" id="shopDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><strong>Shop</strong></a>
                     <ul class="dropdown-menu" aria-labelledby="shopDropdown">
                         <li><a class="dropdown-item" href="{% url 'category_summary' %}">All Products</a></li>
                         <li><hr class="dropdown-divider" /></li>
@@ -53,20 +54,27 @@
                         <li><a class="dropdown-item" href="{% url 'category' 'Mobiles' %}">Mobiles</a></li>
                     </ul>
                 </li>
+
+                {% if user.is_authenticated and user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'add_product' %}"><strong>Add Product</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'add_category' %}"><strong>Add Category</strong></a>
+                </li>
+                {% endif %}
             </ul>
 
-      
-
+            <!-- Larger Cart Button in One Row -->
             <form class="d-flex">
-                <body>
-                    <a href="{% url 'cart_summary' %}" style="display: inline-block; padding: 10px 15px; border: 2px solid #007bff; border-radius: 5px; text-decoration: none; color: #007bff; background-color: #f8f9fa; font-weight: bold; transition: all 0.3s ease;"
-                       onmouseover="this.style.backgroundColor='#007bff'; this.style.color='#fff'; this.style.borderColor='#0056b3';"
-                       onmouseout="this.style.backgroundColor='#f8f9fa'; this.style.color='#007bff'; this.style.borderColor='#007bff';">
-                        <i class="bi-cart-fill me-1"></i> Cart
-                        <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_quantity">{{ cart|length }}</span>
-                    </a>
-                </body>
-               
+                <a href="{% url 'cart_summary' %}" 
+                   style="display: flex; align-items: center; justify-content: center; padding: 10px 15px; border: 2px solid #007bff; border-radius: 5px; text-decoration: none; color: #007bff; background-color: #f8f9fa; font-weight: bold; font-size: 1.1rem; transition: all 0.3s ease;"
+                   onmouseover="this.style.backgroundColor='#007bff'; this.style.color='#fff'; this.style.borderColor='#0056b3';"
+                   onmouseout="this.style.backgroundColor='#f8f9fa'; this.style.color='#007bff'; this.style.borderColor='#007bff';">
+                    <i class="bi-cart-fill me-1"></i> <!-- Cart Icon -->
+                    <span>Cart</span>
+                    <span class="badge bg-dark text-white ms-2 rounded-pill" id="cart_quantity">{{ cart|length }}</span>
+                </a>
             </form>
         </div>
     </div>

@@ -8,9 +8,10 @@ from .forms import SignUpForm,UpdateUserForm,ChangePasswordForm,UserInfoForm
 from django import forms
 from django.db.models import Q
 from cart.cart import Cart
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from payment.forms import ShippingForm
 from payment.models import ShippingAddress
+from .forms import ProductForm,CategoryForm
 
 # Create your views here.
 
@@ -192,4 +193,37 @@ def search(request):
 
     else:
            
-        return render(request,'search.html',{})      
+        return render(request,'search.html',{})  
+
+
+
+# Check if the user is an admin
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
+@login_required
+@user_passes_test(is_admin)
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # Redirect to home or product list page
+    else:
+        form = ProductForm()
+
+    return render(request, 'add_product.html', {'form': form})
+
+@login_required
+@user_passes_test(is_admin)
+def add_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')  # Redirect to home or category list page
+    else:
+        form = CategoryForm()
+
+    return render(request, 'add_category.html', {'form': form})
+
