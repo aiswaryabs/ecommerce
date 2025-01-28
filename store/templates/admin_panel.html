@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Panel</h1>
+
+    <!-- USERS SECTION -->
+    <h2>Users</h2>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th> <!-- Added role column -->
+            <th>Actions</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <td><input type="text" name="username" value="{{ user.username }}" /></td>
+                <td><input type="email" name="email" value="{{ user.email }}" /></td>
+                <td>
+                    <!-- Toggle Admin Role -->
+                    <input type="hidden" name="type" value="user" />
+                    <input type="hidden" name="id" value="{{ user.id }}" />
+                    <label for="is_admin_{{ user.id }}">
+                        Make Admin:
+                        <input type="checkbox" name="is_admin" id="is_admin_{{ user.id }}" {% if user.is_superuser %}checked{% endif %} />
+                    </label>
+                </td>
+                <td>
+                    <button type="submit" name="operation" value="update">Update</button>
+                    <button type="submit" name="operation" value="delete">Delete</button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Add New User</h3>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="user" />
+        <input type="hidden" name="operation" value="add" />
+    
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="email" name="email" placeholder="Email" required />
+        
+        <!-- Added password field -->
+        <input type="password" name="password" placeholder="Password" required />
+        
+        <label for="is_admin_new_user">Make Admin:</label>
+        <input type="checkbox" name="is_admin" id="is_admin_new_user" />
+        
+        <button type="submit">Add User</button>
+    </form>
+    
+
+    <!-- PRODUCTS SECTION -->
+    <h2>Products</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Sale Price</th>
+            <th>Is Sale</th>
+            <th>Category</th>
+            <th>Rating</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+        {% for product in products %}
+        <tr>
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <td><input type="text" name="name" value="{{ product.name }}" /></td>
+                <td><input type="text" name="description" value="{{ product.description }}" /></td>
+                <td><input type="number" step="0.01" name="price" value="{{ product.price }}" /></td>
+                <td><input type="number" step="0.01" name="sale_price" value="{{ product.sale_price }}" /></td>
+                <td>
+                    <input type="hidden" name="is_sale" value="false" />
+                    <input type="checkbox" name="is_sale" value="true" {% if product.is_sale %}checked{% endif %} />
+                </td>
+                <td>
+                    <select name="category_id">
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category.id == product.category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="number" step="0.1" name="rating" value="{{ product.rating }}" min="0" max="5" /></td>
+                <td>
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+                    {% endif %}
+                    <input type="file" name="image" />
+                </td>
+                <td>
+                    <input type="hidden" name="type" value="product" />
+                    <input type="hidden" name="id" value="{{ product.id }}" />
+                    <button type="submit" name="operation" value="update">Update</button>
+                    <button type="submit" name="operation" value="delete">Delete</button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Add New Product</h3>
+    <form method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="product" />
+        <input type="hidden" name="operation" value="add" />
+
+        <input type="text" name="name" placeholder="Product Name" required />
+        <input type="text" name="description" placeholder="Product Description" />
+        <input type="number" step="0.01" name="price" placeholder="Product Price" required />
+        <input type="number" step="0.01" name="sale_price" placeholder="Sale Price" />
+
+        <label>
+            <input type="checkbox" name="is_sale" value="true" />
+            Is on Sale
+        </label>
+
+        <select name="category_id">
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="number" step="0.1" name="rating" placeholder="Product Rating (0-5)" min="0" max="5" />
+        <input type="file" name="image" required />
+
+        <button type="submit">Add Product</button>
+    </form>
+
+    <!-- CATEGORIES SECTION -->
+    <h2>Categories</h2>
+    <table>
+        <tr>
+            <th>Category Name</th>
+            <th>Actions</th>
+        </tr>
+        {% for category in categories %}
+        <tr>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <td><input type="text" name="name" value="{{ category.name }}" /></td>
+                <td>
+                    <input type="hidden" name="type" value="category" />
+                    <input type="hidden" name="id" value="{{ category.id }}" />
+                    <button type="submit" name="operation" value="update">Update</button>
+                    <button type="submit" name="operation" value="delete">Delete</button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Add New Category</h3>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="category" />
+        <input type="hidden" name="operation" value="add" />
+        <input type="text" name="name" placeholder="Category Name" required />
+        <button type="submit">Add Category</button>
+    </form>
+</body>
+</html>

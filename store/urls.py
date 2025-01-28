@@ -22,6 +22,7 @@ urlpatterns = [
     path('delete-product/', views.delete_product, name='delete_product'),
     path('update-product-list/', views.update_product_list, name='update_product_list'),
 
-
+    path('custom-admin/', views.admin_panel, name='custom_admin'),
+    path('login_admin', views.login_admin, name='login_admin'),
 
 ]

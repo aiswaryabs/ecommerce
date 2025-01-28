@@ -12,6 +12,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from payment.forms import ShippingForm
 from payment.models import ShippingAddress
 from .forms import ProductForm,CategoryForm
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.core.files.storage import FileSystemStorage
+from django.core.exceptions import ValidationError
+
+
+
 
 
 # Create your views here.
@@ -266,3 +273,172 @@ def delete_product(request):
 def update_product_list(request):
     products = Product.objects.all()  # Fetch all products
     return render(request, 'update_product_list.html', {'products': products})
+
+
+# for admin
+def login_admin(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            if user.is_superuser:  # Check if the user is a superuser
+                login(request, user)
+                return redirect('custom_admin')  # Redirect to the admin panel
+            else:
+                messages.error(request, 'You do not have permission to access the admin panel.')
+                return redirect('login_admin')  # Redirect back to the login page
+
+        else:
+            messages.error(request, 'Invalid username or password')
+
+    return render(request, 'login_admin.html')  # Login page template
+
+@login_required
+def admin_panel(request):
+    # Check if the logged-in user is a superuser
+    if not request.user.is_superuser:
+        messages.error(request, 'You do not have permission to access the admin panel.')
+        return redirect('login_admin')  # Redirect to login page or any other page
+
+    if request.method == "GET":
+        # Fetch data for the admin panel
+        users = User.objects.all()
+        products = Product.objects.all()
+        categories = Category.objects.all()
+        return render(request, 'admin_panel.html', {
+            'users': users,
+            'products': products,
+            'categories': categories
+        })
+
+    elif request.method == "POST":
+        operation = request.POST.get('operation')
+        obj_type = request.POST.get('type')
+
+        try:
+            # Handling Product Operations
+            if operation == "add" and obj_type == "product":
+                name = request.POST['name']
+                description = request.POST['description']
+                price = request.POST['price']
+                sale_price = request.POST.get('sale_price')
+                rating = request.POST['rating']
+                category_id = request.POST['category_id']
+                category = get_object_or_404(Category, id=category_id)
+                image = request.FILES.get('image')  # Get the uploaded image
+
+                if not image:
+                    messages.error(request, "Image is mandatory!")
+                    return redirect('custom_admin')
+
+                if sale_price == '':
+                    sale_price = 0
+                is_sale = bool(sale_price)
+
+                Product.objects.create(
+                    name=name,
+                    description=description,
+                    price=price,
+                    sale_price=sale_price,
+                    rating=rating,
+                    category=category,
+                    image=image,
+                    is_sale=is_sale
+                )
+                messages.success(request, "Product added successfully!")
+
+            elif operation == "update" and obj_type == "product":
+                product = get_object_or_404(Product, id=request.POST['id'])
+                product.name = request.POST['name']
+                product.description = request.POST['description']
+                product.price = request.POST['price']
+                sale_price = request.POST.get('sale_price')
+                product.rating = request.POST['rating']
+                product.category = get_object_or_404(Category, id=request.POST['category_id'])
+
+                is_sale = request.POST.get('is_sale') == 'true'
+
+                if not is_sale:
+                    product.sale_price = 0
+                else:
+                    if sale_price == '':
+                        sale_price = product.price
+                    product.sale_price = sale_price
+
+                product.is_sale = is_sale
+
+                image = request.FILES.get('image')
+                if image:
+                    product.image = image
+
+                product.save()
+                messages.success(request, "Product updated successfully!")
+
+            elif operation == "delete" and obj_type == "product":
+                product = get_object_or_404(Product, id=request.POST['id'])
+                product.delete()
+                messages.success(request, "Product deleted successfully!")
+
+            # Handling User Operations
+            elif operation == "add" and obj_type == "user":
+                username = request.POST['username']
+                email = request.POST['email']
+                password = request.POST.get('password')  # Get the password
+                is_admin = request.POST.get('is_admin')
+
+                if not password:
+                    messages.error(request, "Password is required!")
+                    return redirect('custom_admin')
+
+                # Create user with password
+                user = User.objects.create_user(username=username, email=email, password=password)
+                
+                if is_admin:
+                    user.is_superuser = True
+                    user.is_staff = True
+                
+                user.save()
+                messages.success(request, "User added successfully!")
+
+            elif operation == "update" and obj_type == "user":
+                user = get_object_or_404(User, id=request.POST['id'])
+                user.username = request.POST['username']
+                user.email = request.POST['email']
+                user.is_superuser = bool(request.POST.get('is_admin'))
+                
+                password = request.POST.get('password')  # Get password for update
+                if password:
+                    user.set_password(password)  # Set the new password if provided
+                
+                user.save()
+                messages.success(request, "User updated successfully!")
+
+            elif operation == "delete" and obj_type == "user":
+                user = get_object_or_404(User, id=request.POST['id'])
+                user.delete()
+                messages.success(request, "User deleted successfully!")
+
+            # Handling Category Operations
+            elif operation == "add" and obj_type == "category":
+                category_name = request.POST['name']
+                Category.objects.create(name=category_name)
+                messages.success(request, "Category added successfully!")
+
+            elif operation == "update" and obj_type == "category":
+                category = get_object_or_404(Category, id=request.POST['id'])
+                category.name = request.POST['name']
+                category.save()
+                messages.success(request, "Category updated successfully!")
+
+            elif operation == "delete" and obj_type == "category":
+                category = get_object_or_404(Category, id=request.POST['id'])
+                category.delete()
+                messages.success(request, "Category deleted successfully!")
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+
+        return redirect('custom_admin')
